@@ -6,7 +6,7 @@ from .models import Student, Class, ClassArm, Department, Subject
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('id', 'first_name', 'last_name', 'birth_date', )
-    list_select_related = ['subject', 'department', '_class', 'class_arm']
+    list_select_related = ['department', '_class', 'class_arm']
 
 
 @admin.register(Class)
