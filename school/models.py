@@ -54,7 +54,7 @@ class Student(models.Model):
     _class = models.ForeignKey(Class, on_delete=models.PROTECT)
     class_arm = models.ForeignKey(ClassArm, on_delete=models.PROTECT)
     department = models.ForeignKey(Department, on_delete=models.PROTECT)
-    subject = models.ManyToManyField(Subject)
+    subjects = models.ManyToManyField(Subject)
 
     def __str__(self) -> str:
         return f'{self.first_name} {self.last_name}'
