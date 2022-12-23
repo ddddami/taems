@@ -6,6 +6,9 @@ from django.db import models
 class Class(models.Model):
     title = models.CharField(max_length=255)
 
+    class Meta:
+        verbose_name_plural = 'Classes'
+
     def __str__(self) -> str:
         return self.title
 
