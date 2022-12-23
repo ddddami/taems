@@ -25,6 +25,7 @@ def get_students_count(queryset):
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('id', 'first_name', 'last_name',
                     'birth_date', 'department', 'student_class')
+    list_filter = ['_class', 'class_arm', 'department', 'subjects']
     # list_editable = ['birth_date', 'department']
     list_select_related = ['department', '_class', 'class_arm']
     search_fields = ['first_name__istartswith', 'last_name__istartswith']
@@ -76,6 +77,7 @@ class DepartmentAdmin(admin.ModelAdmin):
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'students')
+    list_filter = ['group']
     # list_select_related = ['Student']
 
     @admin.display(ordering='students_count')
