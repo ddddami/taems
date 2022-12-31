@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib import admin
 from django.db.models.aggregates import Count
 from django.utils.html import format_html, urlencode
@@ -21,11 +22,32 @@ def get_students_count(queryset):
     return queryset.annotate(students_count=Count('student'))
 
 
+class AgeFilter(admin.SimpleListFilter):
+    title = 'age'
+    parameter_name = 'birth_date'
+
+    def lookups(self, request, model_admin):
+        now = datetime.now().year
+        MIN_AGE = 10
+        MAX_AGE = 18
+        YEARS = tuple(range(now-MAX_AGE+1, now-MIN_AGE))
+        list_values_verbose = []
+        [list_values_verbose.append((year, now-year)) for year in YEARS]
+        return list_values_verbose
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(birth_date__gte=self.value()+'-01-01',
+                                   birth_date__lt=str(int(self.value())+1)+'-01-01')
+        return queryset
+
+
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('id', 'first_name', 'last_name',
                     'birth_date', 'department', 'student_class')
-    list_filter = ['_class', 'class_arm', 'department', 'subjects']
+    list_filter = ['_class', 'class_arm',
+                   'department', 'subjects', AgeFilter]
     # list_editable = ['birth_date', 'department']
     list_select_related = ['department', '_class', 'class_arm']
     search_fields = ['first_name__istartswith', 'last_name__istartswith']
