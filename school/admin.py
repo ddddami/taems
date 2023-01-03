@@ -103,8 +103,8 @@ class SubjectAdmin(admin.ModelAdmin):
     # list_select_related = ['Student']
 
     @admin.display(ordering='students_count')
-    def students(self, department):
-        return get_students(model=department)
+    def students(self, subject):
+        return get_students(model=subject)
 
     def get_queryset(self, request):
         return get_students_count(queryset=super().get_queryset(request))
