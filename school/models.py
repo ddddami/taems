@@ -32,6 +32,18 @@ class Department(models.Model):
         return self.title
 
 
+class Teacher(models.Model):
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    birth_date = models.DateField()
+    taught_classes = models.ManyToManyField(Class)
+    taught_arms = models.ManyToManyField(ClassArm)
+    _class = models.ForeignKey(
+        Class, on_delete=models.SET_NULL, related_name='class_teacher_set', null=True)
+    class_arm = models.ForeignKey(
+        ClassArm, on_delete=models.SET_NULL, related_name='class_teacher_set', null=True)
+
+
 class Subject(models.Model):
     SUBJECT_GROUP_CHOICES = [
         ('Bu', 'Business'),
@@ -42,6 +54,7 @@ class Subject(models.Model):
     ]
     title = models.CharField(max_length=255)
     group = models.CharField(max_length=255, choices=SUBJECT_GROUP_CHOICES)
+    teacher = models.OneToOneField(Teacher, models.SET_NULL, null=True)
 
     def __str__(self) -> str:
         return self.title
