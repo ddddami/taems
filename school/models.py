@@ -32,16 +32,16 @@ class Department(models.Model):
         return self.title
 
 
-class Subject(models.Model):
-    SUBJECT_GROUP_CHOICES = [
-        ('Bu', 'Business'),
-        ('Ge', 'General'),
-        ('Hu', 'Hummanities'),
-        ('Sc', 'Science'),
-        ('Tr', 'Trade')
-    ]
+class SubjectGroup(models.Model):
     title = models.CharField(max_length=255)
-    group = models.CharField(max_length=255, choices=SUBJECT_GROUP_CHOICES)
+
+    def __str__(self) -> str:
+        return self.title
+
+
+class Subject(models.Model):
+    title = models.CharField(max_length=255)
+    group = models.ForeignKey(SubjectGroup, on_delete=models.PROTECT)
 
     def __str__(self) -> str:
         return self.title
