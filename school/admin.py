@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.db.models.aggregates import Count
 from django.utils.html import format_html, urlencode
 from django.urls import reverse
-from .models import Student, Class, ClassArm, Department, Subject
+from .models import Student, Class, ClassArm, Department, Subject, SubjectGroup
 # Register your models here.
 
 
@@ -108,3 +108,23 @@ class SubjectAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         return get_students_count(queryset=super().get_queryset(request))
+
+
+@admin.register(SubjectGroup)
+class SubjectGroupAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'subjects')
+
+    @admin.display(ordering='students_count')
+    def subjects(self, subject_group):
+        url = (
+            reverse('admin:school_subject_changelist')
+            + '?'
+            + urlencode({
+                'group__id': str(subject_group.id)
+            }))
+
+        return format_html('<a href="{}">{} Subjects</a>', url, subject_group.subjects_count)
+
+    def get_queryset(self, request):
+
+        return super().get_queryset(request).annotate(subjects_count=Count('subject'))
