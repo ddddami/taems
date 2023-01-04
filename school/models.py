@@ -104,7 +104,7 @@ class Score(models.Model):
     value = models.PositiveSmallIntegerField()
     teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    type = models.OneToOneField(TestType, on_delete=models.PROTECT)
+    type = models.ForeignKey(TestType, on_delete=models.PROTECT)
 
     def __str__(self) -> str:
         return str(self.value)
