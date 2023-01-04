@@ -74,3 +74,24 @@ class Teacher(models.Model):
 
     class Meta:
         unique_together = [['_class', 'class_arm']]
+
+
+class TestType(models.Model):
+    TEST_TYPE_CHOICES = [
+        ('CA', 'Continuous Assessment'),
+        ('EX', 'Examination'),
+    ]
+    title = models.CharField(max_length=255, choices=TEST_TYPE_CHOICES)
+
+    def __str__(self) -> str:
+        return self.title
+
+
+class Score(models.Model):
+    value = models.PositiveSmallIntegerField()
+    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    type = models.OneToOneField(TestType, on_delete=models.PROTECT)
+
+    def __str__(self) -> str:
+        return str(self.value)
