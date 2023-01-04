@@ -1,9 +1,10 @@
 from datetime import datetime
 from django.contrib import admin
 from django.db.models.aggregates import Count
+from django.db.models import F
 from django.utils.html import format_html, urlencode
 from django.urls import reverse
-from .models import Student, Class, ClassArm, Department, Subject, SubjectGroup, Teacher
+from .models import Score, Student, Class, ClassArm, Department, Subject, SubjectGroup, Teacher
 # Register your models here.
 
 
@@ -136,3 +137,15 @@ class TeacherAdmin(admin.ModelAdmin):
                     'birth_date', 'subject')
     list_filter = ['_class', 'class_arm']
     search_fields = ['first_name__istartswith', 'last_name__istartswith']
+
+
+@admin.register(Score)
+class ScoreAdmin(admin.ModelAdmin):
+    list_display = ('id', 'value', 'student', 'teacher', 'subject')
+    list_filter = ['type', 'student', 'teacher', 'teacher__subject']
+
+    def subject(self, score):
+        return Subject.objects.only('title').get(id=score.subject)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(subject=F('teacher__subject'))
