@@ -7,12 +7,12 @@ from .models import Student, Class, ClassArm, Department, Subject
 # Register your models here.
 
 
-def get_students(model):
+def get_students(model_name, model):
     url = (
         reverse('admin:school_student_changelist')
         + '?'
         + urlencode({
-            str(model) + '__id': str(model.id)
+            model_name + '__id': str(model.id)
         }))
 
     return format_html('<a href="{}">{} Students</a>', url, model.students_count)
@@ -30,7 +30,7 @@ class AgeFilter(admin.SimpleListFilter):
         now = datetime.now().year
         MIN_AGE = 10
         MAX_AGE = 18
-        YEARS = tuple(range(now-MAX_AGE+1, now-MIN_AGE))
+        YEARS = tuple(range(now-MAX_AGE, now-MIN_AGE+1))
         list_values_verbose = []
         [list_values_verbose.append((year, now-year)) for year in YEARS]
         return list_values_verbose
@@ -63,8 +63,8 @@ class ClassAdmin(admin.ModelAdmin):
     # list_select_related = ['Student']
 
     @admin.display(ordering='students_count')
-    def students(self, department):
-        return get_students(model=department)
+    def students(self, _class):
+        return get_students('_class', _class)
 
     def get_queryset(self, request):
         return get_students_count(queryset=super().get_queryset(request))
@@ -77,7 +77,7 @@ class ClassArmAdmin(admin.ModelAdmin):
 
     @admin.display(ordering='students_count')
     def students(self, class_arm):
-        return get_students(model=class_arm)
+        return get_students('class_arm', class_arm)
 
     def get_queryset(self, request):
         return get_students_count(queryset=super().get_queryset(request))
@@ -90,7 +90,7 @@ class DepartmentAdmin(admin.ModelAdmin):
 
     @admin.display(ordering='students_count')
     def students(self, department):
-        return get_students(model=department)
+        return get_students('department', department)
 
     def get_queryset(self, request):
         return get_students_count(queryset=super().get_queryset(request))
@@ -104,7 +104,7 @@ class SubjectAdmin(admin.ModelAdmin):
 
     @admin.display(ordering='students_count')
     def students(self, subject):
-        return get_students(model=subject)
+        return get_students('subjects', subject)
 
     def get_queryset(self, request):
         return get_students_count(queryset=super().get_queryset(request))
