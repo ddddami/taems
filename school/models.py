@@ -72,6 +72,9 @@ class Teacher(models.Model):
         ClassArm, on_delete=models.SET_NULL, related_name='class_teacher_set', null=True)
     subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True)
 
+    def __str__(self) -> str:
+        return f'{self.first_name} {self.last_name}'
+
     class Meta:
         unique_together = [['_class', 'class_arm']]
 
