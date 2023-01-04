@@ -48,8 +48,13 @@ class Subject(models.Model):
 
 
 class Student(models.Model):
+    SEX_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female')
+    ]
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+    sex = models.CharField(max_length=1, choices=SEX_CHOICES)
     birth_date = models.DateField()
     _class = models.ForeignKey(Class, on_delete=models.PROTECT)
     class_arm = models.ForeignKey(ClassArm, on_delete=models.PROTECT)
@@ -61,8 +66,13 @@ class Student(models.Model):
 
 
 class Teacher(models.Model):
+    SEX_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female')
+    ]
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+    sex = models.CharField(max_length=1, choices=SEX_CHOICES)
     birth_date = models.DateField()
     taught_classes = models.ManyToManyField(Class)
     taught_arms = models.ManyToManyField(ClassArm)
