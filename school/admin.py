@@ -141,7 +141,8 @@ class TeacherAdmin(admin.ModelAdmin):
 
 @admin.register(Score)
 class ScoreAdmin(admin.ModelAdmin):
-    list_display = ('id', 'type', 'value', 'student', 'teacher', 'subject')
+    list_display = ('id', 'type', 'value', 'student',
+                    'teacher', 'subject', 'date_created')
     list_filter = ['type', 'student', 'teacher', 'teacher__subject']
 
     def subject(self, score):
