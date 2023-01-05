@@ -167,3 +167,8 @@ class AttendanceMark(models.Model):
 
     class Meta:
         unique_together = [('student', 'day', 'week')]
+
+    def __str__(self) -> str:
+        if self.present:
+            return 'Present'
+        return 'Absent'
