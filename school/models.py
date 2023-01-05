@@ -149,7 +149,14 @@ class Day(models.Model):
 
 
 class Week(models.Model):
-    title = models.CharField(max_length=255)
+    WEEK_CHOICES = [
+        ('First', 'First Week'),
+        ('Second', 'Second Week'),
+        ('Third', 'Third Week'),
+        ('Fourth', 'Fourth Week'),
+        ('Fifth', 'Fifth Week'),
+    ]
+    title = models.CharField(max_length=255, choices=WEEK_CHOICES)
     start_date = models.DateField(auto_now_add=True)
     days = models.ManyToManyField(Day)
 
