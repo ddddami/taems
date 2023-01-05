@@ -139,3 +139,18 @@ class Score(models.Model):
 
     class Meta:
         unique_together = [('student', 'teacher', 'term', 'type')]
+
+
+class Day(models.Model):
+    title = models.CharField(max_length=255)
+
+    def __str__(self) -> str:
+        return self.title
+
+
+class Week(models.Model):
+    start_date = models.DateField(auto_now_add=True)
+    days = models.ManyToManyField(Day)
+
+    def __str__(self) -> str:
+        return 'Start date' + self.start_date
