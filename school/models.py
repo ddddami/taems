@@ -164,3 +164,6 @@ class AttendanceMark(models.Model):
     date_marked = models.DateField(auto_now_add=True)
     week = models.ForeignKey(Week, on_delete=models.PROTECT)
     day = models.ForeignKey(Day, on_delete=models.PROTECT)
+
+    class Meta:
+        unique_together = [('student', 'day', 'week')]
