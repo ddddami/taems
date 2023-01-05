@@ -108,3 +108,27 @@ class Score(models.Model):
 
     def __str__(self) -> str:
         return str(self.value)
+
+
+class Session(models.Model):
+    title = models.CharField(max_length=255)
+
+    def __str__(self) -> str:
+        return self.title
+
+
+class Term(models.Model):
+
+    TERM_CHOICES = [
+        ('F', 'First Term'),
+        ('S', 'Second Term'),
+        ('T', 'Third term')
+    ]
+
+    title = models.CharField(max_length=1, choices=TERM_CHOICES)
+    session = models.ForeignKey(Session, on_delete=models.PROTECT)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True)
+
+    def __str__(self) -> str:
+        return self.title
