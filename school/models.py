@@ -129,7 +129,8 @@ class Score(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     type = models.ForeignKey(TestType, on_delete=models.PROTECT)
-    date_created = models.DateField(auto_now=True)
+    date_created = models.DateField(auto_now_add=True)
+    last_edited = models.DateField(auto_now=True)
     session = models.ForeignKey(Session, on_delete=models.PROTECT)
     term = models.ForeignKey(Term, on_delete=models.PROTECT)
 
