@@ -4,7 +4,7 @@ from django.db.models.aggregates import Count
 from django.db.models import F
 from django.utils.html import format_html, urlencode
 from django.urls import reverse
-from .models import Score, Student, Class, ClassArm, Department, Subject, SubjectGroup, Teacher
+from .models import Score, Session, Student, Class, ClassArm, Department, Subject, SubjectGroup, Teacher, Term
 # Register your models here.
 
 
@@ -149,3 +149,28 @@ class ScoreAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(subject=F('teacher__subject'))
+
+
+@admin.register(Session)
+class SessionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'terms')
+
+    def terms(self, session):
+        url = (
+            reverse('admin:school_term_changelist')
+            + '?'
+            + urlencode({
+                'session__id': str(session.id)
+            }))
+
+        return format_html('<a href="{}">{} Terms</a>', url, session.terms)
+
+    def get_queryset(self, request):
+
+        return super().get_queryset(request).annotate(terms=Count('term'))
+
+
+@admin.register(Term)
+class TermAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'start_date', 'end_date', 'session')
+    list_filter = ['session', 'title']
