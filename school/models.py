@@ -154,3 +154,10 @@ class Week(models.Model):
 
     def __str__(self) -> str:
         return 'Start date' + self.start_date
+
+
+class AttendanceMark(models.Model):
+    present = models.BooleanField(default=False)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
+    date_marked = models.DateField(auto_now_add=True)
