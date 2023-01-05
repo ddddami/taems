@@ -4,7 +4,7 @@ from django.db.models.aggregates import Count
 from django.db.models import F
 from django.utils.html import format_html, urlencode
 from django.urls import reverse
-from .models import Score, Session, Student, Class, ClassArm, Department, Subject, SubjectGroup, Teacher, Term
+from .models import Score, Session, Student, Class, ClassArm, Department, Subject, SubjectGroup, Teacher, Term, Week
 # Register your models here.
 
 
@@ -175,3 +175,9 @@ class SessionAdmin(admin.ModelAdmin):
 class TermAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'start_date', 'end_date', 'session')
     list_filter = ['session', 'title']
+
+
+@admin.register(Week)
+class WeekAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'start_date')
+    list_filter = ['start_date', 'title']
