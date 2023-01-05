@@ -135,3 +135,6 @@ class Score(models.Model):
 
     def __str__(self) -> str:
         return str(self.value)
+
+    class Meta:
+        unique_together = [('student', 'teacher', 'term', 'type')]
