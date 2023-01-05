@@ -100,16 +100,6 @@ class TestType(models.Model):
         return self.title
 
 
-class Score(models.Model):
-    value = models.PositiveSmallIntegerField()
-    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    type = models.ForeignKey(TestType, on_delete=models.PROTECT)
-
-    def __str__(self) -> str:
-        return str(self.value)
-
-
 class Session(models.Model):
     title = models.CharField(max_length=255)
 
@@ -132,3 +122,16 @@ class Term(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+
+class Score(models.Model):
+    value = models.PositiveSmallIntegerField()
+    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    type = models.ForeignKey(TestType, on_delete=models.PROTECT)
+    date_created = models.DateField(auto_now=True)
+    session = models.ForeignKey(Session, on_delete=models.PROTECT)
+    term = models.ForeignKey(Term, on_delete=models.PROTECT)
+
+    def __str__(self) -> str:
+        return str(self.value)
