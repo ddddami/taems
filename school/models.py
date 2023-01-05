@@ -159,7 +159,8 @@ class Week(models.Model):
 class AttendanceMark(models.Model):
     present = models.BooleanField(default=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
+    class_teacher = models.ForeignKey(
+        Teacher, on_delete=models.SET_NULL, null=True)
     date_marked = models.DateField(auto_now_add=True)
     week = models.ForeignKey(Week, on_delete=models.PROTECT)
     day = models.ForeignKey(Day, on_delete=models.PROTECT)
