@@ -149,6 +149,7 @@ class Day(models.Model):
 
 
 class Week(models.Model):
+    title = models.CharField(max_length=255)
     start_date = models.DateField(auto_now_add=True)
     days = models.ManyToManyField(Day)
 
