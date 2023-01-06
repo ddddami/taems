@@ -4,7 +4,7 @@ from django.db.models.aggregates import Count
 from django.db.models import F
 from django.utils.html import format_html, urlencode
 from django.urls import reverse
-from .models import Score, Session, Student, Class, ClassArm, Department, Subject, SubjectGroup, Teacher, Term, Week
+from .models import AttendanceMark, Score, Session, Student, Class, ClassArm, Department, Subject, SubjectGroup, Teacher, Term, Week
 # Register your models here.
 
 
@@ -181,3 +181,9 @@ class TermAdmin(admin.ModelAdmin):
 class WeekAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'start_date')
     list_filter = ['start_date', 'title']
+
+
+@admin.register(AttendanceMark)
+class AttendanceMarkAdmin(admin.ModelAdmin):
+    list_display = ('id', 'present', 'student', 'class_teacher', 'day', 'week')
+    list_filter = ['present', 'class_teacher', 'student', 'day', 'week']

@@ -161,7 +161,7 @@ class Week(models.Model):
     days = models.ManyToManyField(Day)
 
     def __str__(self) -> str:
-        return 'Start date' + self.start_date
+        return self.title
 
 
 class AttendanceMark(models.Model):
