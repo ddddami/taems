@@ -52,6 +52,7 @@ class Student(models.Model):
         ('M', 'Male'),
         ('F', 'Female')
     ]
+    middle_name = models.CharField(max_length=255)
     sex = models.CharField(max_length=1, choices=SEX_CHOICES)
     birth_date = models.DateField()
     _class = models.ForeignKey(Class, on_delete=models.PROTECT)
