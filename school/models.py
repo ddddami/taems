@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.conf import settings
 # Create your models here.
 
 
@@ -60,6 +60,8 @@ class Student(models.Model):
     class_arm = models.ForeignKey(ClassArm, on_delete=models.PROTECT)
     department = models.ForeignKey(Department, on_delete=models.PROTECT)
     subjects = models.ManyToManyField(Subject)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return f'{self.first_name} {self.last_name}'
@@ -81,6 +83,8 @@ class Teacher(models.Model):
     class_arm = models.ForeignKey(
         ClassArm, on_delete=models.SET_NULL, related_name='class_teacher_set', null=True)
     subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return f'{self.first_name} {self.last_name}'
