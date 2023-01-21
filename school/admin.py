@@ -51,7 +51,7 @@ class StudentAdmin(admin.ModelAdmin):
                    'department', 'subjects', AgeFilter]
     # list_editable = ['birth_date', 'department']
     list_select_related = ['department', '_class', 'class_arm']
-    search_fields = ['first_name__istartswith', 'last_name__istartswith']
+    search_fields = ['user__first_name__istartswith', 'user__last_name__istartswith']
     ordering = ['id']
 
     def student_class(self, student):
@@ -136,7 +136,7 @@ class TeacherAdmin(admin.ModelAdmin):
     list_display = ('id', 'first_name', 'last_name',
                     'birth_date', 'subject')
     list_filter = ['_class', 'class_arm']
-    search_fields = ['first_name__istartswith', 'last_name__istartswith']
+    search_fields = ['user__first_name__istartswith', 'user__last_name__istartswith']
 
 
 @admin.register(Score)
