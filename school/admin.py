@@ -50,7 +50,7 @@ class StudentAdmin(admin.ModelAdmin):
     list_filter = ['_class', 'class_arm',
                    'department', 'subjects', AgeFilter]
     # list_editable = ['birth_date', 'department']
-    list_select_related = ['department', '_class', 'class_arm']
+    list_select_related = ['department', '_class', 'class_arm', 'user']
     search_fields = ['user__first_name__istartswith', 'user__last_name__istartswith']
     ordering = ['id']
 
@@ -136,6 +136,7 @@ class TeacherAdmin(admin.ModelAdmin):
     list_display = ('id', 'first_name', 'last_name',
                     'birth_date', 'subject')
     list_filter = ['_class', 'class_arm']
+    list_select_related = ['user', 'subject']
     search_fields = ['user__first_name__istartswith', 'user__last_name__istartswith']
 
 
@@ -182,8 +183,22 @@ class WeekAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'start_date')
     list_filter = ['start_date', 'title']
 
+class StudentFilter(admin.SimpleListFilter):
+    title = 'student'
+    parameter_name = 'student'
+
+    def lookups(self, request, model_admin):
+        students = Student.objects.select_related('user').all()
+        return [(student.id, f'{student.user.first_name} {student.user.last_name}') for student in students]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(student__id=self.value())
 
 @admin.register(AttendanceMark)
 class AttendanceMarkAdmin(admin.ModelAdmin):
     list_display = ('id', 'present', 'student', 'class_teacher', 'day', 'week')
-    list_filter = ['present', 'class_teacher', 'student', 'day', 'week']
+    list_filter = ['present', 'day', 'week', StudentFilter]
+
+    list_select_related = ['day', 'week', 'student', 'student__user']
+   
