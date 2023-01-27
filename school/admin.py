@@ -8,6 +8,12 @@ from .models import AttendanceMark, Score, Session, Student, Class, ClassArm, De
 # Register your models here.
 
 
+def get_thumbnail(instance):
+    if instance.image:
+        return format_html(f'<img src="{instance.image.url}" class="thumbnail" />')
+    return ''
+
+
 def get_students(model_name, model):
     url = (
         reverse('admin:school_student_changelist')
@@ -46,7 +52,7 @@ class AgeFilter(admin.SimpleListFilter):
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('id', 'first_name', 'last_name',
-                    'birth_date', 'department', 'student_class')
+                    'birth_date', 'department', 'student_class', 'thumbnail')
     list_filter = ['_class', 'class_arm',
                    'department', 'subjects', AgeFilter]
     # list_editable = ['birth_date', 'department']
@@ -54,9 +60,16 @@ class StudentAdmin(admin.ModelAdmin):
     search_fields = ['user__first_name__istartswith',
                      'user__last_name__istartswith']
     ordering = ['id']
+    readonly_fields = ['thumbnail']
+
+    def thumbnail(self, instance):
+        get_thumbnail(instance)
 
     def student_class(self, student):
         return f'{student._class} {student.class_arm}'
+
+    class Media:
+        css = {'all': ['school/styles.css']}
 
 
 @admin.register(Class)
@@ -135,11 +148,17 @@ class SubjectGroupAdmin(admin.ModelAdmin):
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
     list_display = ('id', 'first_name', 'last_name',
-                    'birth_date', 'subject')
+                    'birth_date', 'subject', 'thumbnail')
     list_filter = ['_class', 'class_arm']
     list_select_related = ['user', 'subject']
     search_fields = ['user__first_name__istartswith',
                      'user__last_name__istartswith']
+
+    class Media:
+        css = {'all': ['school/styles.css']}
+
+    def thumbnail(self, instance):
+        get_thumbnail(instance)
 
 
 @admin.register(Score)
