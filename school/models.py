@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from .validators import validate_file_size
 # Create your models here.
 
 
@@ -62,7 +63,8 @@ class Student(models.Model):
     subjects = models.ManyToManyField(Subject)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='school/images', null=True)
+    image = models.ImageField(
+        upload_to='school/images', null=True, validators=[validate_file_size])
 
     def __str__(self) -> str:
         return f'{self.user.first_name} {self.user.last_name}'
@@ -90,7 +92,8 @@ class Teacher(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='school/images', null=True)
+    image = models.ImageField(
+        upload_to='school/images', null=True, validators=[validate_file_size])
 
     def __str__(self) -> str:
         return f'{self.user.first_name} {self.user.last_name}'
