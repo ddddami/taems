@@ -62,6 +62,7 @@ class Student(models.Model):
     subjects = models.ManyToManyField(Subject)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='school/images', null=True)
 
     def __str__(self) -> str:
         return f'{self.user.first_name} {self.user.last_name}'
@@ -89,6 +90,7 @@ class Teacher(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='school/images', null=True)
 
     def __str__(self) -> str:
         return f'{self.user.first_name} {self.user.last_name}'
