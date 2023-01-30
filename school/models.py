@@ -53,7 +53,6 @@ class Student(models.Model):
         ('M', 'Male'),
         ('F', 'Female')
     ]
-    middle_name = models.CharField(max_length=255)
     sex = models.CharField(max_length=1, choices=SEX_CHOICES)
     birth_date = models.DateField()
     admission_year = models.PositiveBigIntegerField(null=False)
@@ -74,6 +73,9 @@ class Student(models.Model):
 
     def last_name(self):
         return self.user.last_name
+
+    def middle_name(self):
+        return self.user.middle_name
 
 
 class Teacher(models.Model):
