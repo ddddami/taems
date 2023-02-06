@@ -4,6 +4,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from .serializers import StudentSerializer, AddStudentSerializer
 from .models import Student
 from .filters import StudentFilter
+from .paginator import DefaultPagination
 
 # Create your views here.
 
@@ -11,6 +12,7 @@ from .filters import StudentFilter
 class StudentViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = StudentFilter
+    pagination_class = DefaultPagination
     search_fields = ['^user__first_name',
                      '^user__last_name', '^user__middle_name']
     ordering_fields = ['id']
