@@ -9,6 +9,7 @@ django-debug-toolbar = "*"
 mysqlclient = "*"
 pillow = "*"
 djangorestframework = "*"
+django-filter = "*"
 
 [dev-packages]
 autopep8 = "*"
