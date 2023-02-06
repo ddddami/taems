@@ -106,6 +106,9 @@ class Teacher(models.Model):
     def last_name(self):
         return self.user.last_name
 
+    def middle_name(self):
+        return self.user.middle_name
+
     class Meta:
         unique_together = [['_class', 'class_arm']]
 
