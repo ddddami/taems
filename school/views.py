@@ -30,6 +30,7 @@ class StudentViewSet(ModelViewSet):
 class TeacherViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = TeacherFilter
+    pagination_class = DefaultPagination
     search_fields = ['^user__first_name',
                      '^user__last_name', '^user__middle_name']
     ordering_fields = ['id']
