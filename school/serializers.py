@@ -52,20 +52,18 @@ class TeacherSerializer(serializers.ModelSerializer):
         age(student)
 
     def get_managed_class(self, teacher: Teacher):
-        return f'{teacher._class} {teacher.class_arm}'
+        return f'{teacher.managed_class} {teacher.managed_class_arm}'
 
 
 class AddTeacherSerializer(serializers.ModelSerializer):
     subject_id = serializers.IntegerField()
-    managed_class_id = serializers.IntegerField(
-        source='_class_id', required=False)
-    managed_class_arm_id = serializers.IntegerField(
-        source='class_arm_id', required=False)
+    managed_class_id = serializers.IntegerField(required=False)
+    managed_class_arm_id = serializers.IntegerField(required=False)
 
     def validate(self, attrs):
-        class_id = attrs['_class_id']
-        class_arm_id = attrs['class_arm_id']
-        if Teacher.objects.filter(_class_id=class_id, class_arm_id=class_arm_id).exists():
+        class_id = attrs['managed_class_id']
+        class_arm_id = attrs['managed_class_arm_id']
+        if Teacher.objects.filter(managed_class_id=class_id, managed_class_arm_id=class_arm_id).exists():
             raise serializers.ValidationError(
                 {'error': 'Different teacher already assigned to the specified class.'})
         return attrs

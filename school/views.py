@@ -35,7 +35,7 @@ class TeacherViewSet(ModelViewSet):
                      '^user__last_name', '^user__middle_name']
     ordering_fields = ['id']
     queryset = Teacher.objects.select_related(
-        'user', '_class', 'class_arm', 'subject').all()
+        'user', 'managed_class', 'managed_class_arm', 'subject').all()
 
     def get_serializer_class(self):
         if self.request.method in ['POST', 'PUT']:

@@ -87,9 +87,9 @@ class Teacher(models.Model):
     birth_date = models.DateField()
     taught_classes = models.ManyToManyField(Class)
     taught_arms = models.ManyToManyField(ClassArm)
-    _class = models.ForeignKey(
+    managed_class = models.ForeignKey(
         Class, on_delete=models.SET_NULL, related_name='class_teacher_set', null=True)
-    class_arm = models.ForeignKey(
+    managed_class_arm = models.ForeignKey(
         ClassArm, on_delete=models.SET_NULL, related_name='class_teacher_set', null=True)
     subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
@@ -110,7 +110,7 @@ class Teacher(models.Model):
         return self.user.middle_name
 
     class Meta:
-        unique_together = [['_class', 'class_arm']]
+        unique_together = [['managed_class', 'managed_class_arm']]
 
 
 class TestType(models.Model):

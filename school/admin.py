@@ -149,7 +149,7 @@ class SubjectGroupAdmin(admin.ModelAdmin):
 class TeacherAdmin(admin.ModelAdmin):
     list_display = ('id', 'first_name', 'last_name',
                     'birth_date', 'subject', 'thumbnail')
-    list_filter = ['_class', 'class_arm']
+    list_filter = ['managed_class', 'managed_class_arm']
     list_select_related = ['user', 'subject']
     search_fields = ['user__first_name__istartswith',
                      'user__last_name__istartswith']

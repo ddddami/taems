@@ -18,8 +18,8 @@ class TeacherFilter(filters.FilterSet):
     class Meta:
         model = Teacher
         fields = {
-            '_class_id': ['exact'],
-            'class_arm_id': ['exact'],
+            'managed_class_id': ['exact'],
+            'managed_class_arm_id': ['exact'],
             'sex': ['exact'],
             'subject': ['exact'],
         }
