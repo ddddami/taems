@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from .validators import validate_file_size
+from .validators import validate_file_size, validate_score_size
 # Create your models here.
 
 
@@ -149,7 +149,7 @@ class Term(models.Model):
 
 
 class Score(models.Model):
-    value = models.PositiveSmallIntegerField()
+    value = models.PositiveSmallIntegerField(validators=[validate_score_size])
     teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     type = models.ForeignKey(TestType, on_delete=models.PROTECT)
@@ -162,7 +162,7 @@ class Score(models.Model):
         return str(self.value)
 
     class Meta:
-        unique_together = [('student', 'teacher', 'term', 'type')]
+        unique_together = [('student', 'teacher', 'term', 'session', 'type')]
 
 
 class Day(models.Model):

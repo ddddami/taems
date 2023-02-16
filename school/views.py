@@ -1,8 +1,8 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
-from .serializers import StudentSerializer, AddStudentSerializer, TeacherSerializer, AddTeacherSerializer
-from .models import Student, Teacher
+from .serializers import AddScoreSerializer, ScoreSerializer, StudentSerializer, AddStudentSerializer, TeacherSerializer, AddTeacherSerializer
+from .models import Score, Student, Teacher
 from .filters import StudentFilter, TeacherFilter
 from .paginator import DefaultPagination
 
@@ -41,3 +41,17 @@ class TeacherViewSet(ModelViewSet):
         if self.request.method in ['POST', 'PUT']:
             return AddTeacherSerializer
         return TeacherSerializer
+
+
+class ScoreViewSet(ModelViewSet):
+
+    queryset = Score.objects.prefetch_related(
+        'teacher__user', 'student__user', 'type', 'session', 'term').all()
+
+    def get_serializer_class(self):
+        if self.request.method in ['POST', 'PUT']:
+            return AddScoreSerializer
+        return ScoreSerializer
+
+    def get_serializer_context(self):
+        return self.request.user.teacher.id
