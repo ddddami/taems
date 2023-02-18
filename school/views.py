@@ -1,8 +1,8 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
-from .serializers import AddScoreSerializer, ScoreSerializer, StudentSerializer, AddStudentSerializer, TeacherSerializer, AddTeacherSerializer
-from .models import Score, Student, Teacher
+from .serializers import AddScoreSerializer, AttendanceMarkSerializer, ScoreSerializer, StudentSerializer, AddStudentSerializer, TeacherSerializer, AddTeacherSerializer
+from .models import AttendanceMark, Score, Student, Teacher
 from .filters import StudentFilter, TeacherFilter
 from .paginator import DefaultPagination
 
@@ -64,3 +64,11 @@ class ScoreViewSet(ModelViewSet):
             return queryset.filter(teacher_id=teacher_id)
         student_id = Student.objects.only('id').get(user_id=user.id)
         return queryset.filter(student_id=student_id)
+
+
+class AttendanceMarkViewSet(ModelViewSet):
+    queryset = AttendanceMark.objects.all()
+    serializer_class = AttendanceMarkSerializer
+
+    def get_serializer_context(self):
+        return {'user_id': self.request.user.id}

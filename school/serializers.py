@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Score, Student, Teacher
+from .models import AttendanceMark, Score, Student, Teacher
 from datetime import datetime
 
 
@@ -123,3 +123,18 @@ class AddScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Score
         fields = ['value', 'student_id', 'type_id', 'session_id', 'term_id']
+
+
+class AttendanceMarkSerializer(serializers.ModelSerializer):
+    student = serializers.StringRelatedField()
+    student_id = serializers.IntegerField()
+
+    def create(self, validated_data):
+        teacher_id = Teacher.objects.only(
+            'id').get(user_id=self.context['user_id'])
+        return AttendanceMark.objects.create(**validated_data, teacher_id=teacher_id)
+
+    class Meta:
+        model = AttendanceMark
+        fields = ['id', 'present', 'student', 'student_id',
+                  'date_marked', 'week', 'day']
