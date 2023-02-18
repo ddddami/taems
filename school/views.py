@@ -44,14 +44,23 @@ class TeacherViewSet(ModelViewSet):
 
 
 class ScoreViewSet(ModelViewSet):
-
-    queryset = Score.objects.prefetch_related(
-        'teacher__user', 'student__user', 'type', 'session', 'term').all()
-
+    # TODO: Work on massive upload
     def get_serializer_class(self):
         if self.request.method in ['POST', 'PUT']:
             return AddScoreSerializer
         return ScoreSerializer
 
     def get_serializer_context(self):
-        return self.request.user.teacher.id
+        return self.request.user.teacher_id
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Score.objects.prefetch_related(
+            'teacher__user', 'student__user', 'type', 'session', 'term').all()
+        if user.is_staff:
+            return queryset
+        if Teacher.objects.filter(user_id=user.id).exists():
+            teacher_id = Teacher.objects.only('id').get(user_id=user.id)
+            return queryset.filter(teacher_id=teacher_id)
+        student_id = Student.objects.only('id').get(user_id=user.id)
+        return queryset.filter(student_id=student_id)
