@@ -51,12 +51,12 @@ class ScoreViewSet(ModelViewSet):
         return ScoreSerializer
 
     def get_serializer_context(self):
-        return self.request.user.teacher_id
+        return self.request.user.teacher.id
 
     def get_queryset(self):
         user = self.request.user
-        queryset = Score.objects.prefetch_related(
-            'teacher__user', 'student__user', 'type', 'session', 'term').all()
+        queryset = Score.objects.select_related(
+            'teacher__user', 'student__user', 'type', 'term', 'session').all()
         if user.is_staff:
             return queryset
         if Teacher.objects.filter(user_id=user.id).exists():
@@ -67,7 +67,8 @@ class ScoreViewSet(ModelViewSet):
 
 
 class AttendanceMarkViewSet(ModelViewSet):
-    queryset = AttendanceMark.objects.all()
+    queryset = AttendanceMark.objects.prefetch_related(
+        'type', 'session').all()
     serializer_class = AttendanceMarkSerializer
 
     def get_serializer_context(self):
