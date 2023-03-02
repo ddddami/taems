@@ -57,7 +57,7 @@ class ScoreViewSet(ModelViewSet):
         return ScoreSerializer
 
     def get_serializer_context(self):
-        return self.request.user.teacher.id
+        return {'teacher_id': self.request.user.teacher.id}
 
     def get_queryset(self):
         user = self.request.user

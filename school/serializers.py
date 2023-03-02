@@ -97,7 +97,6 @@ class AddScoreSerializer(serializers.ModelSerializer):
         fields = {
             'type': attrs['type_id'],
             'student': attrs['student_id'],
-            'teacher': attrs['teacher_id'],
             'term': attrs['term_id'],
             'session': attrs['session_id']}
         MIN_SCORE = 30
@@ -118,7 +117,7 @@ class AddScoreSerializer(serializers.ModelSerializer):
         teacher_id = self.context['teacher_id']
         instance = Score.objects.create(
             **validated_data, teacher_id=teacher_id)
-        return self.instance
+        return instance
 
     class Meta:
         model = Score
