@@ -1,5 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.filters import SearchFilter, OrderingFilter
 from .serializers import AddScoreSerializer, AttendanceMarkSerializer, ScoreSerializer, StudentSerializer, AddStudentSerializer, TeacherSerializer, AddTeacherSerializer
 from .models import AttendanceMark, Score, Student, Teacher
@@ -16,6 +17,7 @@ class StudentViewSet(ModelViewSet):
     search_fields = ['^user__first_name',
                      '^user__last_name', '^user__middle_name']
     ordering_fields = ['id']
+    permission_classes = [DjangoModelPermissions]
 
     def get_queryset(self):
         return Student.objects.select_related(
@@ -34,6 +36,8 @@ class TeacherViewSet(ModelViewSet):
     search_fields = ['^user__first_name',
                      '^user__last_name', '^user__middle_name']
     ordering_fields = ['id']
+    permission_classes = [DjangoModelPermissions]
+
     queryset = Teacher.objects.select_related(
         'user', 'managed_class', 'managed_class_arm', 'subject').all()
 
@@ -44,6 +48,8 @@ class TeacherViewSet(ModelViewSet):
 
 
 class ScoreViewSet(ModelViewSet):
+    permission_classes = [DjangoModelPermissions]
+
     # TODO: Work on massive upload
     def get_serializer_class(self):
         if self.request.method in ['POST', 'PUT']:
@@ -67,6 +73,8 @@ class ScoreViewSet(ModelViewSet):
 
 
 class AttendanceMarkViewSet(ModelViewSet):
+    permission_classes = [DjangoModelPermissions]
+
     queryset = AttendanceMark.objects.select_related(
         'student__user', 'class_teacher__user').all()
     serializer_class = AttendanceMarkSerializer
