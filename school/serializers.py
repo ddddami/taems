@@ -132,7 +132,8 @@ class AttendanceMarkSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         teacher_id = Teacher.objects.only(
             'id').get(user_id=self.context['user_id'])
-        return AttendanceMark.objects.create(**validated_data, teacher_id=teacher_id)
+        print(teacher_id)
+        return AttendanceMark.objects.create(**validated_data, class_teacher=teacher_id)
 
     class Meta:
         model = AttendanceMark

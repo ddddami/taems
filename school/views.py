@@ -67,8 +67,8 @@ class ScoreViewSet(ModelViewSet):
 
 
 class AttendanceMarkViewSet(ModelViewSet):
-    queryset = AttendanceMark.objects.prefetch_related(
-        'type', 'session').all()
+    queryset = AttendanceMark.objects.select_related(
+        'student__user', 'class_teacher__user').all()
     serializer_class = AttendanceMarkSerializer
 
     def get_serializer_context(self):
