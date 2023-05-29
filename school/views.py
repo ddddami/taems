@@ -2,6 +2,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.response import Response
+from rest_framework import status
 from .serializers import AddScoreSerializer, AttendanceMarkSerializer, ScoreSerializer, StudentSerializer, AddStudentSerializer, TeacherSerializer, AddTeacherSerializer
 from .models import AttendanceMark, Score, Student, Teacher
 from .filters import StudentFilter, TeacherFilter
@@ -49,27 +51,39 @@ class TeacherViewSet(ModelViewSet):
 
 class ScoreViewSet(ModelViewSet):
     permission_classes = [DjangoModelPermissions]
+    serializer_class = ScoreSerializer
 
-    # TODO: Work on massive upload
     def get_serializer_class(self):
-        if self.request.method in ['POST', 'PUT']:
+        if self.request.method == 'POST':
             return AddScoreSerializer
-        return ScoreSerializer
-
-    def get_serializer_context(self):
-        return {'teacher_id': self.request.user.teacher.id}
+        return super().get_serializer_class()
 
     def get_queryset(self):
         user = self.request.user
         queryset = Score.objects.select_related(
-            'teacher__user', 'student__user', 'type', 'term', 'session').all()
+            'type', 'term', 'session').all()
         if user.is_staff:
             return queryset
         if Teacher.objects.filter(user_id=user.id).exists():
             teacher_id = Teacher.objects.only('id').get(user_id=user.id)
-            return queryset.filter(teacher_id=teacher_id)
+            return queryset.select_related('teacher__user', 'student__user').filter(teacher_id=teacher_id)
         student_id = Student.objects.only('id').get(user_id=user.id)
         return queryset.filter(student_id=student_id)
+
+    def create(self, request, *args, **kwargs):
+        if isinstance(request.data, list):
+            serializer = self.get_serializer(data=request.data, many=True)
+            if serializer.is_valid():
+                for score in serializer.validated_data:
+                    score['teacher_id'] = request.user.teacher.id
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            serializer = self.get_serializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(teacher_id=request.user.teacher.id)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AttendanceMarkViewSet(ModelViewSet):
