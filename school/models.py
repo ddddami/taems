@@ -204,3 +204,13 @@ class AttendanceMark(models.Model):
         if self.present:
             return 'Present'
         return 'Absent'
+
+
+class School(models.Model):
+    short_name = models.CharField(max_length=7)
+    name = models.CharField(max_length=255)
+    code = models.CharField(max_length=255, unique=True)
+    logo = models.ImageField(null=True, blank=True)
+
+    def __str__(self) -> str:
+        return self.short_name
