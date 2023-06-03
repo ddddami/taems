@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'djoser',
     'debug_toolbar',
     'school',
+    'location',
     'core',
 ]
 
