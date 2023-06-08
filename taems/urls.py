@@ -26,7 +26,8 @@ urlpatterns = [
     path('__debug__/', include('debug_toolbar.urls')),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
-    path('school/', include('school.urls'))
+    path('school/', include('school.urls')),
+    path('school/', include('core.urls'))
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
