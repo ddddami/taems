@@ -63,7 +63,7 @@ class Student(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
     image = models.ImageField(
-        upload_to='school/images', null=True, validators=[validate_file_size])
+        upload_to='school/images', default='school/images/user.png', null=True, validators=[validate_file_size])
 
     def __str__(self) -> str:
         return f'{self.user.first_name} {self.user.last_name}'
@@ -95,7 +95,7 @@ class Teacher(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
     image = models.ImageField(
-        upload_to='school/images', null=True, validators=[validate_file_size])
+        upload_to='school/images', default='school/images/user.png', null=True, validators=[validate_file_size])
 
     def __str__(self) -> str:
         return f'{self.user.first_name} {self.user.last_name}'
@@ -210,7 +210,8 @@ class School(models.Model):
     short_name = models.CharField(max_length=7)
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=255, unique=True)
-    logo = models.ImageField(null=True, blank=True)
+    logo = models.ImageField(null=True, blank=True,
+                             default='school/images/school.png')
 
     def __str__(self) -> str:
         return self.short_name
