@@ -4,6 +4,14 @@ from .validators import validate_file_size, validate_score_size
 # Create your models here.
 
 
+class School(models.Model):
+    short_name = models.CharField(max_length=7)
+    name = models.CharField(max_length=255)
+    code = models.CharField(max_length=255, unique=True)
+    logo = models.ImageField(null=True, blank=True,
+                             default='school/images/school.png')
+
+
 class Class(models.Model):
     title = models.CharField(max_length=255)
 
@@ -64,6 +72,7 @@ class Student(models.Model):
                                 on_delete=models.CASCADE)
     image = models.ImageField(
         upload_to='school/images', default='school/images/user.png', null=True, validators=[validate_file_size])
+    school = models.ForeignKey(School, on_delete=models.PROTECT)
 
     def __str__(self) -> str:
         return f'{self.user.first_name} {self.user.last_name}'
@@ -96,6 +105,7 @@ class Teacher(models.Model):
                                 on_delete=models.CASCADE)
     image = models.ImageField(
         upload_to='school/images', default='school/images/user.png', null=True, validators=[validate_file_size])
+    school = models.ForeignKey(School, on_delete=models.PROTECT)
 
     def __str__(self) -> str:
         return f'{self.user.first_name} {self.user.last_name}'
@@ -204,14 +214,3 @@ class AttendanceMark(models.Model):
         if self.present:
             return 'Present'
         return 'Absent'
-
-
-class School(models.Model):
-    short_name = models.CharField(max_length=7)
-    name = models.CharField(max_length=255)
-    code = models.CharField(max_length=255, unique=True)
-    logo = models.ImageField(null=True, blank=True,
-                             default='school/images/school.png')
-
-    def __str__(self) -> str:
-        return self.short_name
