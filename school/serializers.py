@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import AttendanceMark, Score, Student, Teacher
+from .models import AttendanceMark, Score, ScoreSheet, Student, Teacher
 from datetime import datetime
 
 
@@ -74,17 +74,27 @@ class AddTeacherSerializer(serializers.ModelSerializer):
                   'managed_class_id', 'managed_class_arm_id', 'subject_id', 'image']
 
 
+class ScoreSheetSerializer(serializers.ModelSerializer):
+
+    subject = serializers.SerializerMethodField()
+
+    def get_subject(self, scoresheet):
+        return str(scoresheet.teacher.subject)
+
+    class Meta:
+        model = ScoreSheet
+        fields = ['id', 'teacher', 'subject',
+                  'session', 'term', 'date_created']
+
+
 class ScoreSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
-    teacher = serializers.StringRelatedField()
     type = serializers.StringRelatedField()
-    session = serializers.StringRelatedField()
-    term = serializers.StringRelatedField()
+    scoresheet = ScoreSheetSerializer()
 
     class Meta:
         model = Score
-        fields = ['id', 'value', 'teacher', 'student', 'type', 'session', 'term',
-                  ]
+        fields = ['id', 'value', 'student', 'type', 'scoresheet']
 
 
 class AddScoreSerializer(serializers.ModelSerializer):
@@ -94,11 +104,7 @@ class AddScoreSerializer(serializers.ModelSerializer):
     term_id = serializers.IntegerField()
 
     def validate(self, attrs):
-        fields = {
-            'type': attrs['type_id'],
-            'student': attrs['student_id'],
-            'term': attrs['term_id'],
-            'session': attrs['session_id']}
+        fields = {'student': attrs['student_id'], 'type': attrs['type_id']}
         MIN_SCORE = 30
         if fields['type'] == 1 and attrs['value'] > MIN_SCORE:
             raise serializers.ValidationError(
@@ -112,6 +118,15 @@ class AddScoreSerializer(serializers.ModelSerializer):
                 {'error': f'Student already has {test_types[fields["type"]]} Score for this subject in this term.'})
 
         return super().validate(attrs)
+
+    def create(self, validated_data: dict):
+        teacher_id = self.context['teacher_id']
+        scoresheet, created = ScoreSheet.objects.get_or_create(
+            session_id=validated_data['session_id'], term_id=validated_data['term_id'], teacher_id=teacher_id)
+        validated_data.pop('session_id')
+        validated_data.pop('term_id')
+        validated_data['scoresheet_id'] = scoresheet.id
+        return Score.objects.create(**validated_data)
 
     class Meta:
         model = Score

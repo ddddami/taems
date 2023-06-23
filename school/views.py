@@ -1,3 +1,4 @@
+from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import DjangoModelPermissions
@@ -5,7 +6,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import AddScoreSerializer, AttendanceMarkSerializer, ScoreSerializer, StudentSerializer, AddStudentSerializer, TeacherSerializer, AddTeacherSerializer
-from .models import AttendanceMark, Score, Student, Teacher
+from .models import AttendanceMark, Score, ScoreSheet, Student, Teacher
 from .filters import StudentFilter, TeacherFilter
 from .paginator import DefaultPagination
 
@@ -53,6 +54,9 @@ class ScoreViewSet(ModelViewSet):
     permission_classes = [DjangoModelPermissions]
     serializer_class = ScoreSerializer
 
+    def get_serializer_context(self):
+        return {'teacher_id': self.request.user.teacher.id}
+
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return AddScoreSerializer
@@ -61,28 +65,41 @@ class ScoreViewSet(ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         queryset = Score.objects.select_related(
-            'type', 'term', 'session').all()
+            'type', 'scoresheet').all()
+        session_id = self.request.query_params.get('session_id')
+        term_id = self.request.query_params.get('term_id')
+        subject_id = self.request.query_params.get('subject_id')
+        school_id = self.request.query_params.get('school_id')
         if user.is_staff:
-            return queryset
+            teacher_id = Teacher.objects.only('id').filter(
+                school_id=school_id, subject_id=subject_id).first()
+            scoresheet_id = ScoreSheet.objects.only('id').filter(
+                session_id=session_id, term_id=term_id, teacher_id=teacher_id).first()
+            return queryset.filter(scoresheet_id=scoresheet_id)
         if Teacher.objects.filter(user_id=user.id).exists():
             teacher_id = Teacher.objects.only('id').get(user_id=user.id)
-            return queryset.select_related('teacher__user', 'student__user').filter(teacher_id=teacher_id)
+            scoresheet_id = ScoreSheet.objects.only('id').filter(
+                teacher_id=teacher_id, session_id=session_id, term_id=term_id).first()
+            return queryset.select_related('student__user').filter(scoresheet_id=scoresheet_id)
         student_id = Student.objects.only('id').get(user_id=user.id)
-        return queryset.filter(student_id=student_id)
+        return queryset.filter(student_id=student_id, scoresheet_id=scoresheet_id)
 
     def create(self, request, *args, **kwargs):
         if isinstance(request.data, list):
             serializer = self.get_serializer(data=request.data, many=True)
             if serializer.is_valid():
-                for score in serializer.validated_data:
-                    score['teacher_id'] = request.user.teacher.id
+                # for score in serializer.validated_data:
+                # score['teacher_id'] = request.user.teacher.id
+                # score['scoresheet_id'] = scoresheet.id
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             serializer = self.get_serializer(data=request.data)
             if serializer.is_valid():
-                serializer.save(teacher_id=request.user.teacher.id)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                # serializer.save(teacher_id=request.user.teacher.id)
+                # serializer.save(scoresheet_id=scoresheet.id)
+                serializer.save()
+                return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
