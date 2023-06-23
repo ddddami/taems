@@ -158,21 +158,29 @@ class Term(models.Model):
         return self.title
 
 
-class Score(models.Model):
-    value = models.PositiveSmallIntegerField(validators=[validate_score_size])
+class ScoreSheet(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    type = models.ForeignKey(TestType, on_delete=models.PROTECT)
-    date_created = models.DateField(auto_now_add=True)
-    last_edited = models.DateField(auto_now=True)
+    submitted = models.BooleanField(default=False)
     session = models.ForeignKey(Session, on_delete=models.PROTECT)
     term = models.ForeignKey(Term, on_delete=models.PROTECT)
+    date_created = models.DateField(auto_now_add=True)
+
+    class Meta:
+        unique_together = [('teacher', 'term', 'session')]
+
+
+class Score(models.Model):
+    value = models.PositiveSmallIntegerField(validators=[validate_score_size])
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    type = models.ForeignKey(TestType, on_delete=models.PROTECT)
+    last_edited = models.DateField(auto_now=True)
+    scoresheet = models.ForeignKey(ScoreSheet, on_delete=models.PROTECT)
 
     def __str__(self) -> str:
         return str(self.value)
 
     class Meta:
-        unique_together = [('student', 'teacher', 'term', 'session', 'type')]
+        unique_together = [('student', 'scoresheet', 'type')]
 
 
 class Day(models.Model):
