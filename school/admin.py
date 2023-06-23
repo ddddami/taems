@@ -164,20 +164,25 @@ class TeacherAdmin(admin.ModelAdmin):
 @admin.register(Score)
 class ScoreAdmin(admin.ModelAdmin):
     list_display = ('id', 'type', 'value', 'student',
-                    'teacher', 'date_created')
+                    'last_edited', 'teacher', 'subject', 'school')
     # list_filter = ['type', 'student', 'teacher', 'teacher__subject']
-    list_filter = ['type',  'teacher__subject']
+    list_filter = ['type',  'scoresheet__teacher__subject',
+                   'scoresheet__session', 'scoresheet__term']
     search_fields = [
         'student__user__first_name__istartswith',
-        'student__user__last_name__istartswith',
-        'teacher__user__first_name__istartswith',
-        'teacher__user__last_name__istartswith']
+        'student__user__last_name__istartswith']
+
+    def school(self, score):
+        return score.student.school
+
+    def teacher(self, score):
+        return score.scoresheet.teacher
 
     def subject(self, score):
-        return Subject.objects.only('title').get(id=score.subject)
+        return score.scoresheet.teacher.subject
 
     def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related('teacher__user', 'student__user').annotate(subject=F('teacher__subject'))
+        return super().get_queryset(request).prefetch_related('scoresheet__teacher').annotate(subject=F('scoresheet__teacher__subject'))
 
 
 @admin.register(Session)
