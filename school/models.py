@@ -174,7 +174,7 @@ class Score(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     type = models.ForeignKey(TestType, on_delete=models.PROTECT)
     last_edited = models.DateField(auto_now=True)
-    scoresheet = models.ForeignKey(ScoreSheet, on_delete=models.PROTECT)
+    scoresheet = models.ForeignKey(ScoreSheet, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return str(self.value)
