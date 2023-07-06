@@ -114,7 +114,7 @@ class DepartmentAdmin(admin.ModelAdmin):
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'students')
-    list_filter = ['group']
+    list_filter = ['groups']
     # list_select_related = ['Student']
 
     @admin.display(ordering='students_count')

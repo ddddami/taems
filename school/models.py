@@ -50,7 +50,7 @@ class SubjectGroup(models.Model):
 
 class Subject(models.Model):
     title = models.CharField(max_length=255)
-    group = models.ForeignKey(SubjectGroup, on_delete=models.PROTECT)
+    groups = models.ManyToManyField(SubjectGroup, related_name='subjects')
 
     def __str__(self) -> str:
         return self.title
