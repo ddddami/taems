@@ -84,7 +84,7 @@ class ScoreSheetSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScoreSheet
         fields = ['id', 'teacher', 'subject',
-                  'session', 'term', 'date_created']
+                  'session', 'term', 'date_created', '_class', 'class_arm']
 
 
 class ScoreSerializer(serializers.ModelSerializer):

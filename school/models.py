@@ -164,6 +164,8 @@ class ScoreSheet(models.Model):
     session = models.ForeignKey(Session, on_delete=models.PROTECT)
     term = models.ForeignKey(Term, on_delete=models.PROTECT)
     date_created = models.DateField(auto_now_add=True)
+    _class = models.ForeignKey(Class, on_delete=models.PROTECT)
+    class_arm = models.ForeignKey(ClassArm, on_delete=models.PROTECT)
 
     class Meta:
         unique_together = [('teacher', 'term', 'session')]
@@ -175,6 +177,8 @@ class Score(models.Model):
     type = models.ForeignKey(TestType, on_delete=models.PROTECT)
     last_edited = models.DateField(auto_now=True)
     scoresheet = models.ForeignKey(ScoreSheet, on_delete=models.CASCADE)
+    session = models.ForeignKey(Session, on_delete=models.PROTECT)
+    term = models.ForeignKey(Term, on_delete=models.PROTECT)
 
     def __str__(self) -> str:
         return str(self.value)

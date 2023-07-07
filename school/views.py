@@ -55,7 +55,9 @@ class ScoreViewSet(ModelViewSet):
     serializer_class = ScoreSerializer
 
     def get_serializer_context(self):
-        return {'teacher_id': self.request.user.teacher.id}
+        user = self.request.user
+        if Teacher.objects.filter(user_id=user.id).exists():
+            return {'teacher_id': user.teacher.id}
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -70,19 +72,22 @@ class ScoreViewSet(ModelViewSet):
         term_id = self.request.query_params.get('term_id')
         subject_id = self.request.query_params.get('subject_id')
         school_id = self.request.query_params.get('school_id')
+        class_id = self.request.query_params.get('class_id')
+        class_arm_id = self.request.query_params.get('class_arm_id')
         if user.is_staff:
             teacher_id = Teacher.objects.only('id').filter(
-                school_id=school_id, subject_id=subject_id).first()
+                school_id=school_id, subject_id=subject_id, _class_id=class_id, class_arm_id=class_arm_id).first()
             scoresheet_id = ScoreSheet.objects.only('id').filter(
                 session_id=session_id, term_id=term_id, teacher_id=teacher_id).first()
             return queryset.filter(scoresheet_id=scoresheet_id)
         if Teacher.objects.filter(user_id=user.id).exists():
             teacher_id = Teacher.objects.only('id').get(user_id=user.id)
             scoresheet_id = ScoreSheet.objects.only('id').filter(
-                teacher_id=teacher_id, session_id=session_id, term_id=term_id).first()
+                teacher_id=teacher_id, session_id=session_id, term_id=term_id, _class_id=class_id, class_arm_id=class_arm_id).first()
             return queryset.select_related('student__user').filter(scoresheet_id=scoresheet_id)
-        student_id = Student.objects.only('id').get(user_id=user.id)
-        return queryset.filter(student_id=student_id, scoresheet_id=scoresheet_id)
+        student = Student.objects.get(user_id=user.id)
+        # print(session_id) I dont know why it's printing 4 times ...yet
+        return queryset.filter(session_id=session_id, term_id=term_id, student_id=student.id)
 
     def create(self, request, *args, **kwargs):
         if isinstance(request.data, list):
