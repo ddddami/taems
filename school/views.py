@@ -1,12 +1,13 @@
 from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import AddScoreSerializer, AttendanceMarkSerializer, ScoreSerializer, StudentSerializer, AddStudentSerializer, TeacherSerializer, AddTeacherSerializer
-from .models import AttendanceMark, Score, ScoreSheet, Student, Teacher
+from .serializers import AddScoreSerializer, AttendanceMarkSerializer, ScoreSerializer, StudentSerializer, AddStudentSerializer, SubjectSerializer, TeacherSerializer, AddTeacherSerializer
+from .models import AttendanceMark, Score, ScoreSheet, Student, Subject, Teacher
 from .filters import StudentFilter, TeacherFilter
 from .paginator import DefaultPagination
 
@@ -117,3 +118,8 @@ class AttendanceMarkViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return {'user_id': self.request.user.id}
+
+
+class SubjectViewSet(ListModelMixin, GenericViewSet):
+    queryset = Subject.objects.all()
+    serializer_class = SubjectSerializer

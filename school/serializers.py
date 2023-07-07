@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import AttendanceMark, Score, ScoreSheet, Student, Teacher
+from .models import AttendanceMark, Score, ScoreSheet, Student, Subject, Teacher
 from datetime import datetime
 
 
@@ -147,3 +147,9 @@ class AttendanceMarkSerializer(serializers.ModelSerializer):
         model = AttendanceMark
         fields = ['id', 'present', 'student', 'student_id',
                   'date_marked', 'week', 'day']
+
+
+class SubjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subject
+        fields = ['id', 'title']
