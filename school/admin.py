@@ -52,7 +52,7 @@ class AgeFilter(admin.SimpleListFilter):
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('id', 'first_name', 'last_name',
-                    'birth_date', 'department', 'student_class', 'thumbnail')
+                    'birth_date', 'department', '_class', 'thumbnail')
     list_filter = ['_class', 'class_arm',
                    'department', 'subjects', AgeFilter]
     # list_editable = ['birth_date', 'department']
@@ -78,8 +78,8 @@ class ClassAdmin(admin.ModelAdmin):
     # list_select_related = ['Student']
 
     @admin.display(ordering='students_count')
-    def students(self, _class):
-        return get_students('_class', _class)
+    def students(self, student_class):
+        return get_students('student_class', student_class)
 
     def get_queryset(self, request):
         return get_students_count(queryset=super().get_queryset(request))

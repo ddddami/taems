@@ -64,7 +64,8 @@ class Student(models.Model):
     sex = models.CharField(max_length=1, choices=SEX_CHOICES)
     birth_date = models.DateField()
     admission_year = models.PositiveBigIntegerField(null=False)
-    _class = models.ForeignKey(Class, on_delete=models.PROTECT)
+    _class = models.ForeignKey(
+        Class, on_delete=models.PROTECT, db_column='class_id')
     class_arm = models.ForeignKey(ClassArm, on_delete=models.PROTECT)
     department = models.ForeignKey(Department, on_delete=models.PROTECT)
     subjects = models.ManyToManyField(Subject)
