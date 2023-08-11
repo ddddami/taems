@@ -2,7 +2,8 @@ from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.mixins import ListModelMixin
-from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.decorators import action
+from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 from rest_framework import status
@@ -33,6 +34,19 @@ class StudentViewSet(ModelViewSet):
             return AddStudentSerializer
         return StudentSerializer
 
+    @action(detail=False, methods=['GET', 'PUT'], permission_classes=[IsAuthenticated])
+    def me(self, request):
+        student = Student.objects.get(
+            user_id=request.user.id)
+        if request.method == 'GET':
+            serializer = StudentSerializer(student)
+            return Response(serializer.data)
+        elif request.method == 'PUT':
+            serializer = AddStudentSerializer(student, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class TeacherViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -50,6 +64,19 @@ class TeacherViewSet(ModelViewSet):
         if self.request.method in ['POST', 'PUT']:
             return AddTeacherSerializer
         return TeacherSerializer
+
+    @action(detail=False, methods=['GET', 'PUT'], permission_classes=[IsAuthenticated])
+    def me(self, request):
+        teacher = Teacher.objects.get(
+            user_id=request.user.id)
+        if request.method == 'GET':
+            serializer = TeacherSerializer(teacher)
+            return Response(serializer.data)
+        elif request.method == 'PUT':
+            serializer = AddTeacherSerializer(teacher, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ScoreViewSet(ModelViewSet):
