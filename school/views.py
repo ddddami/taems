@@ -26,8 +26,10 @@ class StudentViewSet(ModelViewSet):
     permission_classes = [FullDjangoModelPermission]
 
     def get_queryset(self):
+        user_id = self.request.user.id
+        school_id = Teacher.objects.get(user_id=user_id).school.id
         return Student.objects.select_related(
-            'user', '_class', 'class_arm', 'department', 'school').all()
+            'user', '_class', 'class_arm', 'department', 'school').filter(school_id=school_id)
 
     def get_serializer_class(self):
         if self.request.method in ['POST', 'PUT']:
