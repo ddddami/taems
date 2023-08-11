@@ -55,7 +55,7 @@ class TeacherViewSet(ModelViewSet):
     search_fields = ['^user__first_name',
                      '^user__last_name', '^user__middle_name']
     ordering_fields = ['id']
-    permission_classes = [DjangoModelPermissions]
+    permission_classes = [FullDjangoModelPermission]
 
     queryset = Teacher.objects.select_related(
         'user', 'managed_class', 'managed_class_arm', 'subject').all()
