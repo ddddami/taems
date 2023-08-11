@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import AddScoreSerializer, AttendanceMarkSerializer, ScoreSerializer, StudentSerializer, AddStudentSerializer, SubjectSerializer, TeacherSerializer, AddTeacherSerializer
 from .models import AttendanceMark, Score, ScoreSheet, Student, Subject, Teacher
-from .permissions import FullDjangoModelPermission
+from .permissions import FullDjangoModelPermission, IsSchoolMember, IsOfStudentSchool
 from .filters import StudentFilter, TeacherFilter
 from .paginator import DefaultPagination
 
@@ -23,7 +23,7 @@ class StudentViewSet(ModelViewSet):
     search_fields = ['^user__first_name',
                      '^user__last_name', '^user__middle_name']
     ordering_fields = ['id']
-    permission_classes = [FullDjangoModelPermission]
+    permission_classes = [FullDjangoModelPermission, IsSchoolMember]
 
     def get_queryset(self):
         user_id = self.request.user.id
@@ -57,10 +57,13 @@ class TeacherViewSet(ModelViewSet):
     search_fields = ['^user__first_name',
                      '^user__last_name', '^user__middle_name']
     ordering_fields = ['id']
-    permission_classes = [FullDjangoModelPermission]
+    permission_classes = [FullDjangoModelPermission, IsSchoolMember]
 
-    queryset = Teacher.objects.select_related(
-        'user', 'managed_class', 'managed_class_arm', 'subject').all()
+    def get_queryset(self):
+        user_id = self.request.user.id
+        school_id = Teacher.objects.get(user_id=user_id).school.id
+        return Teacher.objects.select_related(
+            'user', 'managed_class', 'managed_class_arm', 'subject').filter(school_id=school_id)
 
     def get_serializer_class(self):
         if self.request.method in ['POST', 'PUT']:
@@ -82,7 +85,7 @@ class TeacherViewSet(ModelViewSet):
 
 
 class ScoreViewSet(ModelViewSet):
-    permission_classes = [DjangoModelPermissions]
+    permission_classes = [DjangoModelPermissions, IsOfStudentSchool]
     serializer_class = ScoreSerializer
 
     def get_serializer_context(self):
@@ -140,7 +143,7 @@ class ScoreViewSet(ModelViewSet):
 
 
 class AttendanceMarkViewSet(ModelViewSet):
-    permission_classes = [DjangoModelPermissions]
+    permission_classes = [DjangoModelPermissions, IsOfStudentSchool]
 
     queryset = AttendanceMark.objects.select_related(
         'student__user', 'class_teacher__user').all()

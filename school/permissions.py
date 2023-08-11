@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from school.models import Teacher
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
@@ -11,3 +12,21 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 class FullDjangoModelPermission(permissions.DjangoModelPermissions):
     def __init__(self) -> None:
         self.perms_map['GET'] = ['%(app_label)s.view_%(model_name)s']
+
+
+class IsSchoolMember(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        school_id = Teacher.objects.get(user_id=request.user.id).school.id
+        if school_id == obj.school_id:
+            return True
+        return False
+
+
+class IsOfStudentSchool(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        school_id = Teacher.objects.get(user_id=request.user.id).school.id
+        if school_id == obj.student.school_id:
+            return True
+        return False
