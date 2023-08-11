@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import AddScoreSerializer, AttendanceMarkSerializer, ScoreSerializer, StudentSerializer, AddStudentSerializer, SubjectSerializer, TeacherSerializer, AddTeacherSerializer
 from .models import AttendanceMark, Score, ScoreSheet, Student, Subject, Teacher
+from .permissions import FullDjangoModelPermission
 from .filters import StudentFilter, TeacherFilter
 from .paginator import DefaultPagination
 
@@ -21,7 +22,7 @@ class StudentViewSet(ModelViewSet):
     search_fields = ['^user__first_name',
                      '^user__last_name', '^user__middle_name']
     ordering_fields = ['id']
-    permission_classes = [DjangoModelPermissions]
+    permission_classes = [FullDjangoModelPermission]
 
     def get_queryset(self):
         return Student.objects.select_related(
