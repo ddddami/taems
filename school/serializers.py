@@ -13,11 +13,12 @@ class StudentSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField(read_only=True)
     department = serializers.StringRelatedField()
     user_id = serializers.IntegerField(read_only=True)
+    school = serializers.StringRelatedField()
 
     class Meta:
         model = Student
         fields = ['id', 'first_name', 'last_name', 'middle_name', 'user_id', 'sex',
-                  'department', '_class', 'admission_year', 'age', 'image']
+                  'department', '_class', 'admission_year', 'age', 'image', 'school']
 
     def get_age(self, student: Student):
         age(student)
@@ -42,11 +43,12 @@ class TeacherSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
     managed_class = serializers.SerializerMethodField()
     taught_subject = serializers.StringRelatedField(source='subject')
+    school = serializers.StringRelatedField()
 
     class Meta:
         model = Teacher
         fields = ['id', 'first_name', 'last_name',
-                  'middle_name', 'user_id', 'sex', 'birth_date', 'age', 'managed_class', 'taught_subject', 'image']
+                  'middle_name', 'user_id', 'sex', 'birth_date', 'age', 'managed_class', 'taught_subject', 'image', 'school']
 
     def get_age(self, student: Student):
         age(student)

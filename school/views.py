@@ -25,7 +25,7 @@ class StudentViewSet(ModelViewSet):
 
     def get_queryset(self):
         return Student.objects.select_related(
-            'user', '_class', 'class_arm', 'department').all()
+            'user', '_class', 'class_arm', 'department', 'school').all()
 
     def get_serializer_class(self):
         if self.request.method in ['POST', 'PUT']:
