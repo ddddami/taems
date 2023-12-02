@@ -10,7 +10,7 @@ class School(models.Model):
     code = models.CharField(max_length=255, unique=True)
     logo = models.ImageField(null=True, blank=True,
                              default='school/images/school.png')
-    
+
     def __str__(self) -> str:
         return self.name
 
@@ -181,8 +181,6 @@ class Score(models.Model):
     type = models.ForeignKey(TestType, on_delete=models.PROTECT)
     last_edited = models.DateField(auto_now=True)
     scoresheet = models.ForeignKey(ScoreSheet, on_delete=models.CASCADE)
-    session = models.ForeignKey(Session, on_delete=models.PROTECT)
-    term = models.ForeignKey(Term, on_delete=models.PROTECT)
 
     def __str__(self) -> str:
         return str(self.value)
