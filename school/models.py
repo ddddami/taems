@@ -123,6 +123,9 @@ class Teacher(models.Model):
     def middle_name(self):
         return self.user.middle_name
 
+    def full_name(self):
+        return self.last_name() + ' ' + self.first_name()
+
     class Meta:
         unique_together = [['managed_class', 'managed_class_arm']]
 
@@ -173,6 +176,9 @@ class ScoreSheet(models.Model):
 
     class Meta:
         unique_together = [('teacher', 'term', 'session')]
+
+    def __str__(self) -> str:
+        return f'{self.teacher.full_name()} {self.session} {self._class} {self.class_arm}'
 
 
 class Score(models.Model):
