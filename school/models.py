@@ -101,9 +101,9 @@ class Teacher(models.Model):
     taught_classes = models.ManyToManyField(Class)
     taught_arms = models.ManyToManyField(ClassArm)
     managed_class = models.ForeignKey(
-        Class, on_delete=models.SET_NULL, related_name='class_teacher_set', null=True)
+        Class, on_delete=models.SET_NULL, related_name='class_teacher_set', blank=True, null=True)
     managed_class_arm = models.ForeignKey(
-        ClassArm, on_delete=models.SET_NULL, related_name='class_teacher_set', null=True)
+        ClassArm, on_delete=models.SET_NULL, related_name='class_teacher_set', blank=True, null=True)
     subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
